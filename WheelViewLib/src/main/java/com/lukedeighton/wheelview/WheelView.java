@@ -17,6 +17,7 @@
 
 package com.lukedeighton.wheelview;
 
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -171,6 +172,8 @@ public class WheelView extends View {
     private WheelSelectionTransformer mSelectionTransformer;
     private WheelAdapter mAdapter;
     private boolean mFromClick;
+    private TimeInterpolator mSnapInterpolator;
+    private long mSnapAnimationDuration;
 
     public WheelView(Context context) {
         super(context);
@@ -601,6 +604,22 @@ public class WheelView extends View {
         mSnapToPosition = snapToPosition;
     }
 
+    public long getSnapAnimationDuration() {
+        return mSnapAnimationDuration;
+    }
+
+    public void setSnapAnimationDuration(long snapAnimationDuration) {
+        this.mSnapAnimationDuration = snapAnimationDuration;
+    }
+
+    public TimeInterpolator getSnapInterpolator() {
+        return mSnapInterpolator;
+    }
+
+    public void setSnapInterpolator(TimeInterpolator snapInterpolator) {
+        this.mSnapInterpolator = snapInterpolator;
+    }
+
     /*
     public void setWheelPosition(int position) {
         //TODO possible solution to animate or instantly?
@@ -970,6 +989,12 @@ public class WheelView extends View {
     public void setAngle(float angle, boolean animate) {
         if (animate) {
             ValueAnimator valueAnimator = ValueAnimator.ofFloat(mAngle, angle);
+            if (mSnapInterpolator != null) {
+                valueAnimator.setInterpolator(mSnapInterpolator);
+            }
+            if (mSnapAnimationDuration != 0) {
+                valueAnimator.setDuration(mSnapAnimationDuration);
+            }
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
