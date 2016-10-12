@@ -17,6 +17,7 @@
 
 package com.lukedeighton.wheelview;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -896,8 +897,25 @@ public class WheelView extends View {
      * @see #setMidSelected()
      */
     public void setSelected(int rawPosition) {
+        setSelected(rawPosition, false);
+    }
+
+
+    /**
+     * <p>
+     * Changes the wheel angle so that the item at the provided position becomes selected.
+     * </p>
+     * <p>
+     * Note that this does not change the selection angle, instead it will rotate the wheel
+     * to the angle where the provided position becomes selected.
+     * </p>
+     *
+     * @param rawPosition the raw position (can take negative numbers)
+     * @see #setMidSelected()
+     */
+    public void setSelected(int rawPosition, boolean animate) {
         //must rotate the wheel in the opposite direction so that the given position becomes selected
-        setAngle(-1f * getAngleForPosition(rawPosition));
+        setAngle(-1f * getAngleForPosition(rawPosition), animate);
     }
 
     /**
@@ -938,6 +956,27 @@ public class WheelView extends View {
         }
 
         invalidate();
+    }
+
+    /**
+     * Set the angle of the wheel instantaneously.
+     * Note this does not animate to the provided angle.
+     *
+     * @param angle given in degrees and can be any value (not only between 0 and 360)
+     */
+    public void setAngle(float angle, boolean animate) {
+        if (animate) {
+            ValueAnimator valueAnimator = ValueAnimator.ofFloat(mAngle, angle);
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    setAngle((Float) animation.getAnimatedValue());
+                }
+            });
+            valueAnimator.start();
+        } else {
+            setAngle(angle);
+        }
     }
 
     /**
