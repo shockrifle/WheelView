@@ -964,7 +964,6 @@ public class WheelView extends View {
 
     /**
      * Set the angle of the wheel instantaneously.
-     * Note this does not animate to the provided angle.
      *
      * @param angle given in degrees and can be any value (not only between 0 and 360)
      */
@@ -1245,7 +1244,7 @@ public class WheelView extends View {
             mRequiresUpdate = false;
 
             if (mSnapToPosition && !mFromClick) {
-                setSelected(getSelectedPosition(), true);
+                setSelected(getRawSelectedPosition(), true);
             }
             if (mOnWheelRotationStoppedListener != null) {
                 mOnWheelRotationStoppedListener.onWheelRotationStopped(this);
