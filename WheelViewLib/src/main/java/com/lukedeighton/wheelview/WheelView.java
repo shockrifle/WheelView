@@ -164,6 +164,7 @@ public class WheelView extends View {
     private OnWheelAngleChangeListener mOnAngleChangeListener;
     private OnWheelItemSelectListener mOnItemSelectListener;
     private OnWheelItemVisibilityChangeListener mOnItemVisibilityChangeListener;
+    private OnWheelRotationStoppedListener mOnWheelRotationStoppedListener;
     private WheelItemTransformer mItemTransformer;
     private WheelSelectionTransformer mSelectionTransformer;
     private WheelAdapter mAdapter;
@@ -388,6 +389,21 @@ public class WheelView extends View {
 
     public OnWheelAngleChangeListener getOnWheelAngleChangeListener() {
         return mOnAngleChangeListener;
+    }
+
+    /**
+     * A listener for when the wheel's rotation has stopped.
+     */
+    public interface OnWheelRotationStoppedListener {
+        void onWheelRotationStopped(WheelView wheelView);
+    }
+
+    public void setOnWheelRotationStoppedListener(OnWheelRotationStoppedListener listener) {
+        mOnWheelRotationStoppedListener = listener;
+    }
+
+    public OnWheelRotationStoppedListener getOnWheelRotationStoppedListener() {
+        return mOnWheelRotationStoppedListener;
     }
 
     public void setAdapter(WheelAdapter wheelAdapter) {
@@ -1184,6 +1200,11 @@ public class WheelView extends View {
             addAngle(mAngularVelocity * deltaTime);
         } else {
             mRequiresUpdate = false;
+
+            //TODO: ADD Stop Event
+            if (mOnWheelRotationStoppedListener != null) {
+                mOnWheelRotationStoppedListener.onWheelRotationStopped(this);
+            }
         }
     }
 
