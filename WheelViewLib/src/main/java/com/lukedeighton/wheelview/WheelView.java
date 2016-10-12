@@ -104,6 +104,7 @@ public class WheelView extends View {
     private int mRawSelectedPosition;
     private float mLastWheelTouchX;
     private float mLastWheelTouchY;
+    private boolean mSnapToPosition;
 
     private CacheItem[] mItemCacheArray;
     private Drawable mWheelDrawable;
@@ -169,6 +170,7 @@ public class WheelView extends View {
     private WheelItemTransformer mItemTransformer;
     private WheelSelectionTransformer mSelectionTransformer;
     private WheelAdapter mAdapter;
+    private boolean mFromClick;
 
     public WheelView(Context context) {
         super(context);
@@ -226,6 +228,7 @@ public class WheelView extends View {
         mOffsetX = a.getDimensionPixelSize(R.styleable.WheelView_wheelOffsetX, 0);
         mOffsetY = a.getDimensionPixelSize(R.styleable.WheelView_wheelOffsetY, 0);
         mWheelToItemDistance = a.getLayoutDimension(R.styleable.WheelView_wheelToItemDistance, ViewGroup.LayoutParams.MATCH_PARENT);
+        mSnapToPosition = a.getBoolean(R.styleable.WheelView_snapToPosition, false);
 
         int itemCount = a.getInteger(R.styleable.WheelView_wheelItemCount, 0);
 
@@ -590,6 +593,14 @@ public class WheelView extends View {
         return mOffsetY;
     }
 
+    public boolean isSnapToPosition() {
+        return mSnapToPosition;
+    }
+
+    public void setSnapToPosition(boolean snapToPosition) {
+        mSnapToPosition = snapToPosition;
+    }
+
     /*
     public void setWheelPosition(int position) {
         //TODO possible solution to animate or instantly?
@@ -900,23 +911,16 @@ public class WheelView extends View {
         setSelected(rawPosition, false);
     }
 
-
-    /**
-     * <p>
-     * Changes the wheel angle so that the item at the provided position becomes selected.
-     * </p>
-     * <p>
-     * Note that this does not change the selection angle, instead it will rotate the wheel
-     * to the angle where the provided position becomes selected.
-     * </p>
-     *
-     * @param rawPosition the raw position (can take negative numbers)
-     * @see #setMidSelected()
-     */
     public void setSelected(int rawPosition, boolean animate) {
+        setSelected(rawPosition, animate, false);
+    }
+
+    public void setSelected(int rawPosition, boolean animate, boolean fromClick) {
         //must rotate the wheel in the opposite direction so that the given position becomes selected
+        mFromClick = fromClick;
         setAngle(-1f * getAngleForPosition(rawPosition), animate);
     }
+
 
     /**
      * Changes the wheel angle so that the item in the middle of the adapter becomes selected.
@@ -1240,10 +1244,13 @@ public class WheelView extends View {
         } else {
             mRequiresUpdate = false;
 
-            //TODO: ADD Stop Event
+            if (mSnapToPosition && !mFromClick) {
+                setSelected(getSelectedPosition(), true);
+            }
             if (mOnWheelRotationStoppedListener != null) {
                 mOnWheelRotationStoppedListener.onWheelRotationStopped(this);
             }
+            mFromClick = false;
         }
     }
 

@@ -17,7 +17,8 @@
         app:wheelRadius="276dp"
         app:wheelItemCount="14"
         app:wheelPadding="13dp"
-        app:wheelItemRadius="41dp"/>
+        app:wheelItemRadius="41dp"
+        app:snapToPosition="true"/>
 
     <!--
             app:wheelPosition="bottom"

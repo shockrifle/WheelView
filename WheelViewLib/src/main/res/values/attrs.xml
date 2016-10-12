@@ -34,5 +34,6 @@
             <flag name="bottom" value="0x08" />
         </attr>
         <attr name="wheelPadding" format="dimension"/>
+        <attr name="snapToPosition" format="boolean"/>
     </declare-styleable>
 </resources>
