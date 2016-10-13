@@ -1299,6 +1299,14 @@ public class WheelView extends View {
             if (mSnapToPosition && !mFromClick) {
                 setSelected(getRawSelectedPosition(), true);
             }
+            if (!mFromClick && !mIsRepeatable) {
+                int rawSelectedPosition = getRawSelectedPosition();
+                if (rawSelectedPosition < 0) {
+                    setSelected(0, true);
+                } else if (rawSelectedPosition >= mAdapterItemCount) {
+                    setSelected(mAdapterItemCount - 1, true);
+                }
+            }
             if (mOnWheelRotationStoppedListener != null) {
                 mOnWheelRotationStoppedListener.onWheelRotationStopped(this);
             }
