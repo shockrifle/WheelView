@@ -53,7 +53,8 @@ public class MainActivity extends Activity {
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
                 String msg = String.valueOf(position) + " " + isSelected;
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                parent.setSelected(position, true, true);
+
+                parent.setSelectedByItemPosition(position);
             }
         });
 

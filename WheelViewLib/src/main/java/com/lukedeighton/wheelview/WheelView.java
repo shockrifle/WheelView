@@ -940,6 +940,34 @@ public class WheelView extends View {
         setAngle(-1f * getAngleForPosition(rawPosition), animate);
     }
 
+    public void setSelectedByItemPosition(int itemPosition) {
+        int rawPos = getRawSelectedPosition();
+        int count = getAdapter().getCount();
+        int currentPos = (count + rawPos % count) % count;
+
+        int step = 0;
+
+        if (currentPos < itemPosition) {
+            int positiveDistance = itemPosition - currentPos;
+            int negativeDistance = currentPos + count - itemPosition;
+            if (positiveDistance < negativeDistance) {
+                step = positiveDistance;
+            } else {
+                step = -negativeDistance;
+            }
+        } else {
+            int positiveDistance = count - currentPos + itemPosition;
+            int negativeDistance = currentPos - itemPosition;
+            if (positiveDistance < negativeDistance) {
+                step = positiveDistance;
+            } else {
+                step = -negativeDistance;
+            }
+        }
+
+        setSelected(rawPos + step, true, true);
+    }
+
 
     /**
      * Changes the wheel angle so that the item in the middle of the adapter becomes selected.
