@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
         //initialise the selection drawable with the first contrast color
         wheelView.setSelectionColor(getContrastColor(entries.get(0)));
 
+        wheelView.setTouchFactorMultiplier(-1);
         /*
         new Handler().postDelayed(new Runnable() {
             @Override

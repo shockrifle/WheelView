@@ -174,6 +174,7 @@ public class WheelView extends View {
     private boolean mFromClick;
     private TimeInterpolator mSnapInterpolator;
     private long mSnapAnimationDuration;
+    private float mTouchFactorMultiplier = 1;
 
     public WheelView(Context context) {
         super(context);
@@ -463,6 +464,16 @@ public class WheelView extends View {
      */
     public boolean isRepeatableAdapter() {
         return mIsRepeatable;
+    }
+
+    /**
+     * The swipe gesture multiplied by this value enabling control of how much the wheel spins while
+     * dragging. Default is 1, bigger than one increase spin negative values spins the opposite direction.
+     *
+     * @param touchFactorMultiplier any float
+     */
+    public void setTouchFactorMultiplier(float touchFactorMultiplier) {
+        this.mTouchFactorMultiplier = touchFactorMultiplier;
     }
 
     public void setWheelItemAngle(float angle) {
@@ -1180,7 +1191,7 @@ public class WheelView extends View {
 
                 float wheelRadiusSquared = mWheelBounds.getRadius() * mWheelBounds.getRadius();
                 float touchRadiusSquared = mRadiusVector.x * mRadiusVector.x + mRadiusVector.y * mRadiusVector.y;
-                float touchFactor = TOUCH_FACTORS[(int) (touchRadiusSquared / wheelRadiusSquared * TOUCH_FACTORS.length)];
+                float touchFactor = TOUCH_FACTORS[(int) (touchRadiusSquared / wheelRadiusSquared * TOUCH_FACTORS.length)] * mTouchFactorMultiplier;
                 float touchAngle = mWheelBounds.angleToDegrees(x, y);
                 float draggedAngle = -1f * Circle.shortestAngle(touchAngle, mLastTouchAngle) * touchFactor;
                 addAngle(draggedAngle);
@@ -1225,7 +1236,7 @@ public class WheelView extends View {
         float angularAccel = torque / wheelRadiusSquared;
 
         //estimate an angular velocity based on the strength of the angular acceleration
-        float angularVel = angularAccel * ANGULAR_VEL_COEFFICIENT;
+        float angularVel = angularAccel * ANGULAR_VEL_COEFFICIENT * mTouchFactorMultiplier;
 
         //clamp the angular velocity
         if (angularVel > MAX_ANGULAR_VEL) angularVel = MAX_ANGULAR_VEL;
