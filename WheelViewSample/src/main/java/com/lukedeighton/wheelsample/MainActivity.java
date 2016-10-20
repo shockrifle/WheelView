@@ -1,13 +1,18 @@
 package com.lukedeighton.wheelsample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lukedeighton.wheelview.WheelView;
@@ -36,12 +41,12 @@ public class MainActivity extends Activity {
         }
 
         //populate the adapter, that knows how to draw each item (as you would do with a ListAdapter)
-        wheelView.setAdapter(new MaterialColorAdapter(entries));
+        wheelView.setAdapter(new MaterialColorAdapter(entries, this));
 
         //a listener for receiving a callback for when the item closest to the selection angle changes
         wheelView.setOnWheelItemSelectedListener(new WheelView.OnWheelItemSelectListener() {
             @Override
-            public void onWheelItemSelected(WheelView parent, Drawable itemDrawable, int position) {
+            public void onWheelItemSelected(WheelView parent, View item, int position) {
                 //get the item at this position
                 Map.Entry<String, Integer> selectedEntry = ((MaterialColorAdapter) parent.getAdapter()).getItem(position);
                 parent.setSelectionColor(getContrastColor(selectedEntry));
@@ -61,7 +66,7 @@ public class MainActivity extends Activity {
         //initialise the selection drawable with the first contrast color
         wheelView.setSelectionColor(getContrastColor(entries.get(0)));
 
-        wheelView.setTouchFactorMultiplier(-1);
+//        wheelView.setTouchFactorMultiplier(-1);
         /*
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -94,17 +99,19 @@ public class MainActivity extends Activity {
     }
 
     static class MaterialColorAdapter extends WheelArrayAdapter<Map.Entry<String, Integer>> {
-        MaterialColorAdapter(List<Map.Entry<String, Integer>> entries) {
+
+        private final Context context;
+
+        MaterialColorAdapter(List<Map.Entry<String, Integer>> entries, Context context) {
             super(entries);
+            this.context = context;
         }
 
         @Override
-        public Drawable getDrawable(int position) {
-            Drawable[] drawable = new Drawable[] {
-                    createOvalDrawable(getItem(position).getValue()),
-                    new TextDrawable(String.valueOf(position))
-            };
-            return new LayerDrawable(drawable);
+        public View getView(int position) {
+            LinearLayout view = (LinearLayout) ((LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.item, null);
+            ((TextView) view.findViewById(R.id.desc)).setText(String.valueOf(position));
+            return view;
         }
 
         private Drawable createOvalDrawable(int color) {
