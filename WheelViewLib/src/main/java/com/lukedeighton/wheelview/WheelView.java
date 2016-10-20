@@ -1065,9 +1065,14 @@ public class WheelView extends View {
 
                 if (view != null) {
                     canvas.save();
-                    canvas.translate(sTempRect.left, sTempRect.top);
-                    view.measure(MeasureSpec.makeMeasureSpec(sTempRect.right - sTempRect.left, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(sTempRect.bottom - sTempRect.top, MeasureSpec.EXACTLY));
-                    view.layout(0, 0, sTempRect.right - sTempRect.left, sTempRect.bottom - sTempRect.top);
+                    int width = (int) ((float) (sTempRect.right - sTempRect.left) * view.getScaleX());
+                    int height = (int) ((float) (sTempRect.bottom - sTempRect.top) * view.getScaleY());
+                    int left = (int) ((float) sTempRect.left + ((float) (sTempRect.right - sTempRect.left) / 2f) - ((float) width / 2f));
+                    int top = (int) ((float) sTempRect.top + ((float) (sTempRect.bottom - sTempRect.top) / 2f) - ((float) height / 2f));
+                    canvas.translate(left, top);
+                    canvas.rotate(view.getRotation(), view.getPivotX(), view.getPivotY());
+                    view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+                    view.layout(0, 0, width, height);
                     view.draw(canvas);
                     canvas.restore();
                 }
